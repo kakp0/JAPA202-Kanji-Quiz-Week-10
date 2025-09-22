@@ -33,7 +33,7 @@
             transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* New Button Styles */
+        /* Button Styles */
         .btn {
             @apply px-6 py-3 font-semibold rounded-3xl shadow-lg focus:outline-none focus:ring-2 focus:ring-opacity-75 transition-all transform duration-300 ease-in-out;
             background-color: rgba(30, 30, 50, 0.5);
@@ -103,6 +103,49 @@
             to { text-shadow: 0 0 18px rgba(102, 126, 234, 0.8); }
         }
 
+        /* --- NEW Tooltip Styles --- */
+        .title-card {
+            position: relative;
+        }
+        .info-tooltip {
+            position: absolute;
+            bottom: 105%; /* Position above the title card */
+            left: 50%;
+            transform: translateX(-50%) translateY(10px); /* Start slightly lower */
+            background-color: rgba(20, 20, 35, 0.95);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            color: #e0e0e0;
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            width: 200px;
+            z-index: 10;
+            opacity: 0;
+            pointer-events: none; /* Can't interact with it when hidden */
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+        }
+        .title-card:hover .info-tooltip {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateX(-50%) translateY(0); /* Move to final position */
+        }
+        .progress-bar-container {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 999px;
+            overflow: hidden;
+            height: 8px;
+            margin-top: 8px;
+        }
+        .progress-bar-inner {
+            background: linear-gradient(90deg, #4f46e5, #a78bfa);
+            height: 100%;
+            border-radius: 999px;
+            transition: width 0.5s ease;
+        }
+
+        /* Animations */
         .achievement-toast { animation: toast-in-out 4s ease-in-out forwards; }
         .rank-up-modal { animation: modal-fade-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
         .rank-up-glow { box-shadow: 0 0 30px var(--rank-glow-color), 0 0 50px var(--rank-glow-color); animation: pulse-glow 2s infinite alternate; }
@@ -186,7 +229,7 @@
             <div class="fade-in">
                 <p id="question-text" class="text-center text-xl mb-6">What is an on'yomi reading?</p>
                 <div id="choices-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    </div>
+                </div>
             </div>
             
             <div class="text-center mt-6 fade-in">
@@ -207,7 +250,6 @@
 
     <div id="toast-container" class="fixed bottom-5 right-5 w-full max-w-sm z-50 flex flex-col items-end space-y-2">
     </div>
-
 
     <div id="rank-up-modal" class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 rank-up-modal z-50">
         <div id="rank-up-card" class="bg-gray-900 rounded-3xl p-8 text-center relative overflow-hidden">
@@ -271,37 +313,43 @@
             { name: "Supersonic Legend", minLevel: 140, icon: "💫", colorClass: "rank-supersonic-legend", glowColor: "#00f7ff" }
         ];
 
+        // --- UPDATED Titles array with description and progress tracking ---
         const titles = [
-            { id: 1, name: "Kanji Novice", rarity: "common", condition: (stats) => stats.totalCorrect >= 1 },
-            { id: 2, name: "First Steps", rarity: "common", condition: (stats) => stats.sessionsCompleted >= 1 },
-            { id: 3, name: "Reader in Training", rarity: "common", condition: (stats) => stats.totalCorrect >= 10 },
-            { id: 9, name: "Quick Learner", rarity: "common", condition: (stats) => stats.level >= 15 },
-            { id: 4, name: "Streak Starter", rarity: "uncommon", condition: (stats) => stats.maxStreak >= 5 },
-            { id: 5, name: "On'yomi Apprentice", rarity: "uncommon", condition: (stats) => stats.correctOnyomi >= 20 },
-            { id: 6, name: "Kun'yomi Kenkyuuin", rarity: "uncommon", condition: (stats) => stats.correctKunyomi >= 20 },
-            { id: 7, name: "Meaning Master", rarity: "uncommon", condition: (stats) => stats.correctMeaning >= 20 },
-            { id: 8, name: "Silver Soul", rarity: "uncommon", condition: (stats) => stats.rankName.startsWith("Silver") },
-            { id: 10, name: "Dedicated Student", rarity: "uncommon", condition: (stats) => stats.sessionsCompleted >= 5 },
-            { id: 11, name: "Perfect Ten", rarity: "rare", condition: (stats) => stats.maxStreak >= 10 },
-            { id: 12, name: "Century Club", rarity: "rare", condition: (stats) => stats.totalCorrect >= 100 },
-            { id: 13, name: "Gold Standard", rarity: "rare", condition: (stats) => stats.rankName.startsWith("Gold") },
-            { id: 15, name: "Kanji Scholar", rarity: "rare", condition: (stats) => stats.totalCorrect >= 250 },
-            { id: 16, name: "Platinum Player", rarity: "rare", condition: (stats) => stats.rankName.startsWith("Platinum") },
-            { id: 17, name: "Halfway Hero", rarity: "rare", condition: (stats) => stats.level >= 50 },
-            { id: 29, name: "Sensei", rarity: "rare", condition: (stats) => kanjiData.every(k => stats.masteredKanji.includes(k.kanji))},
-            { id: 14, name: "Unstoppable", rarity: "epic", condition: (stats) => stats.maxStreak >= 20 },
-            { id: 18, name: "On'yomi Expert", rarity: "epic", condition: (stats) => stats.correctOnyomi >= 100 },
-            { id: 19, name: "Kun'yomi Master", rarity: "epic", condition: (stats) => stats.correctKunyomi >= 100 },
-            { id: 20, name: "Diamond Dynamo", rarity: "epic", condition: (stats) => stats.rankName.startsWith("Diamond") },
-            { id: 21, name: "Five Hundred Fortress", rarity: "epic", condition: (stats) => stats.totalCorrect >= 500 },
-            { id: 22, name: "The Consecutor", rarity: "epic", condition: (stats) => stats.maxStreak >= 35 },
-            { id: 23, name: "Champion's Aura", rarity: "epic", condition: (stats) => stats.rankName.startsWith("Champion") },
-            { id: 24, name: "Level 100 Legend", rarity: "epic", condition: (stats) => stats.level >= 100 },
-            { id: 25, name: "Kanji Kensei", rarity: "legendary", condition: (stats) => stats.totalCorrect >= 750 },
-            { id: 26, name: "Grand Champion", rarity: "legendary", condition: (stats) => stats.rankName.startsWith("Grand Champion") },
-            { id: 27, name: "Thousand Triumph", rarity: "legendary", condition: (stats) => stats.totalCorrect >= 1000 },
-            { id: 28, name: "Flawless Fifty", rarity: "legendary", condition: (stats) => stats.maxStreak >= 50 },
-            { id: 30, name: "Supersonic Legend", rarity: "legendary", condition: (stats) => stats.rankName === "Supersonic Legend" }
+            // Common
+            { id: 1, name: "Kanji Novice", rarity: "common", description: "Get your first correct answer.", condition: (stats) => stats.totalCorrect >= 1, progress: (stats) => ({ current: stats.totalCorrect, target: 1 }) },
+            { id: 2, name: "First Steps", rarity: "common", description: "Complete your first learning session.", condition: (stats) => stats.sessionsCompleted >= 1, progress: (stats) => ({ current: stats.sessionsCompleted, target: 1 }) },
+            { id: 3, name: "Reader in Training", rarity: "common", description: "Get 10 correct answers.", condition: (stats) => stats.totalCorrect >= 10, progress: (stats) => ({ current: stats.totalCorrect, target: 10 }) },
+            { id: 9, name: "Quick Learner", rarity: "common", description: "Reach Level 15.", condition: (stats) => stats.level >= 15, progress: (player) => ({ current: player.level, target: 15 }) },
+            // Uncommon
+            { id: 4, name: "Streak Starter", rarity: "uncommon", description: "Achieve a 5 answer streak.", condition: (stats) => stats.maxStreak >= 5, progress: (stats) => ({ current: stats.maxStreak, target: 5 }) },
+            { id: 5, name: "On'yomi Apprentice", rarity: "uncommon", description: "Answer 20 on'yomi questions correctly.", condition: (stats) => stats.correctOnyomi >= 20, progress: (stats) => ({ current: stats.correctOnyomi, target: 20 }) },
+            { id: 6, name: "Kun'yomi Kenkyuuin", rarity: "uncommon", description: "Answer 20 kun'yomi questions correctly.", condition: (stats) => stats.correctKunyomi >= 20, progress: (stats) => ({ current: stats.correctKunyomi, target: 20 }) },
+            { id: 7, name: "Meaning Master", rarity: "uncommon", description: "Answer 20 meaning questions correctly.", condition: (stats) => stats.correctMeaning >= 20, progress: (stats) => ({ current: stats.correctMeaning, target: 20 }) },
+            { id: 8, name: "Silver Soul", rarity: "uncommon", description: "Get promoted to the Silver rank.", condition: (stats) => stats.rankName.startsWith("Silver"), progress: null },
+            { id: 10, name: "Dedicated Student", rarity: "uncommon", description: "Complete 5 learning sessions.", condition: (stats) => stats.sessionsCompleted >= 5, progress: (stats) => ({ current: stats.sessionsCompleted, target: 5 }) },
+            // Rare
+            { id: 11, name: "Perfect Ten", rarity: "rare", description: "Achieve a 10 answer streak.", condition: (stats) => stats.maxStreak >= 10, progress: (stats) => ({ current: stats.maxStreak, target: 10 }) },
+            { id: 12, name: "Century Club", rarity: "rare", description: "Get 100 correct answers.", condition: (stats) => stats.totalCorrect >= 100, progress: (stats) => ({ current: stats.totalCorrect, target: 100 }) },
+            { id: 13, name: "Gold Standard", rarity: "rare", description: "Get promoted to the Gold rank.", condition: (stats) => stats.rankName.startsWith("Gold"), progress: null },
+            { id: 15, name: "Kanji Scholar", rarity: "rare", description: "Get 250 correct answers.", condition: (stats) => stats.totalCorrect >= 250, progress: (stats) => ({ current: stats.totalCorrect, target: 250 }) },
+            { id: 16, name: "Platinum Player", rarity: "rare", description: "Get promoted to the Platinum rank.", condition: (stats) => stats.rankName.startsWith("Platinum"), progress: null },
+            { id: 17, name: "Halfway Hero", rarity: "rare", description: "Reach Level 50.", condition: (stats, player) => player.level >= 50, progress: (stats, player) => ({ current: player.level, target: 50 }) },
+            { id: 29, name: "Sensei", rarity: "rare", description: "Correctly answer a question for every kanji.", condition: (stats) => kanjiData.every(k => stats.masteredKanji.includes(k.kanji)), progress: (stats) => ({ current: stats.masteredKanji.length, target: kanjiData.length }) },
+            // Epic
+            { id: 14, name: "Unstoppable", rarity: "epic", description: "Achieve a 20 answer streak.", condition: (stats) => stats.maxStreak >= 20, progress: (stats) => ({ current: stats.maxStreak, target: 20 }) },
+            { id: 18, name: "On'yomi Expert", rarity: "epic", description: "Answer 100 on'yomi questions correctly.", condition: (stats) => stats.correctOnyomi >= 100, progress: (stats) => ({ current: stats.correctOnyomi, target: 100 }) },
+            { id: 19, name: "Kun'yomi Master", rarity: "epic", description: "Answer 100 kun'yomi questions correctly.", condition: (stats) => stats.correctKunyomi >= 100, progress: (stats) => ({ current: stats.correctKunyomi, target: 100 }) },
+            { id: 20, name: "Diamond Dynamo", rarity: "epic", description: "Get promoted to the Diamond rank.", condition: (stats) => stats.rankName.startsWith("Diamond"), progress: null },
+            { id: 21, name: "Five Hundred Fortress", rarity: "epic", description: "Get 500 correct answers.", condition: (stats) => stats.totalCorrect >= 500, progress: (stats) => ({ current: stats.totalCorrect, target: 500 }) },
+            { id: 22, name: "The Consecutor", rarity: "epic", description: "Achieve a 35 answer streak.", condition: (stats) => stats.maxStreak >= 35, progress: (stats) => ({ current: stats.maxStreak, target: 35 }) },
+            { id: 23, name: "Champion's Aura", rarity: "epic", description: "Get promoted to the Champion rank.", condition: (stats) => stats.rankName.startsWith("Champion"), progress: null },
+            { id: 24, name: "Level 100 Legend", rarity: "epic", description: "Reach Level 100.", condition: (stats, player) => player.level >= 100, progress: (stats, player) => ({ current: player.level, target: 100 }) },
+            // Legendary
+            { id: 25, name: "Kanji Kensei", rarity: "legendary", description: "Get 750 correct answers.", condition: (stats) => stats.totalCorrect >= 750, progress: (stats) => ({ current: stats.totalCorrect, target: 750 }) },
+            { id: 26, name: "Grand Champion", rarity: "legendary", description: "Get promoted to the Grand Champion rank.", condition: (stats) => stats.rankName.startsWith("Grand Champion"), progress: null },
+            { id: 27, name: "Thousand Triumph", rarity: "legendary", description: "Get 1000 correct answers.", condition: (stats) => stats.totalCorrect >= 1000, progress: (stats) => ({ current: stats.totalCorrect, target: 1000 }) },
+            { id: 28, name: "Flawless Fifty", rarity: "legendary", description: "Achieve a 50 answer streak.", condition: (stats) => stats.maxStreak >= 50, progress: (stats) => ({ current: stats.maxStreak, target: 50 }) },
+            { id: 30, name: "Supersonic Legend", rarity: "legendary", description: "Achieve the highest rank: Supersonic Legend.", condition: (stats) => stats.rankName === "Supersonic Legend", progress: null }
         ];
 
         let player = {
@@ -310,7 +358,7 @@
             xp: 0,
             unlockedTitles: [],
             currentTitle: null,
-            performanceData: {}, // NEW: For Spaced Repetition System
+            performanceData: {}, // For Spaced Repetition System
             stats: {
                 totalCorrect: 0,
                 totalIncorrect: 0,
@@ -422,35 +470,25 @@
             dom.rankUpModal.classList.remove('hidden');
         }
 
-        // --- NEW Spaced Repetition System (SRS) Logic ---
+        // --- Spaced Repetition System (SRS) Logic ---
         function updatePerformance(kanjiChar, type, isCorrect) {
-            if (!player.performanceData[kanjiChar]) {
-                player.performanceData[kanjiChar] = {};
-            }
-            if (!player.performanceData[kanjiChar][type]) {
-                player.performanceData[kanjiChar][type] = [];
-            }
+            if (!player.performanceData[kanjiChar]) player.performanceData[kanjiChar] = {};
+            if (!player.performanceData[kanjiChar][type]) player.performanceData[kanjiChar][type] = [];
             const history = player.performanceData[kanjiChar][type];
             history.push(isCorrect);
-            if (history.length > 5) {
-                history.shift(); // Keep only the last 5 results
-            }
+            if (history.length > 5) history.shift();
         }
 
         function getWrongnessScore(kanjiChar, type) {
             const history = player.performanceData[kanjiChar]?.[type];
-            if (!history || history.length === 0) {
-                return 1.0; // 100% wrong if never answered
-            }
+            if (!history || history.length === 0) return 1.0;
             const wrongCount = history.filter(correct => !correct).length;
             return wrongCount / history.length;
         }
-        // --- End of SRS Logic ---
 
         function generateQuestion() {
             dom.kanjiInfo.classList.add('opacity-0');
             
-            // 1. Build a pool of all possible questions
             const questionPool = [];
             kanjiData.forEach(kanji => {
                 if (kanji.onyomi.length > 0) questionPool.push({ kanji: kanji, type: 'onyomi' });
@@ -461,23 +499,19 @@
                 }
             });
 
-            // 2. Score each question and sort by the ones you get wrong most often
             const scoredPool = questionPool.map(q => ({
                 ...q,
                 score: getWrongnessScore(q.kanji.kanji, q.type)
             })).sort((a, b) => b.score - a.score);
 
-            // 3. Pick a random question from the top 25% of your weakest questions
             const topTierCount = Math.max(5, Math.floor(scoredPool.length * 0.25));
             const chosenQuestionData = scoredPool[Math.floor(Math.random() * topTierCount)];
             
-            // 4. Generate the question based on the prioritized selection
             const { kanji, type } = chosenQuestionData;
-            let correctAnswer;
-            let choices;
+            let correctAnswer, choices;
 
             if (type === 'kanji') {
-                const readingType = Math.random() < 0.5 && kanji.kunyomi.length > 0 ? 'kunyomi' : 'onyomi';
+                const readingType = (Math.random() < 0.5 && kanji.kunyomi.length > 0) || kanji.onyomi.length === 0 ? 'kunyomi' : 'onyomi';
                 const reading = kanji[readingType][Math.floor(Math.random() * kanji[readingType].length)];
                 dom.questionText.textContent = `Which Kanji has this reading?`;
                 dom.kanjiChar.textContent = reading;
@@ -544,7 +578,7 @@
             const { kanji, type, answer } = currentQuestion;
             const isCorrect = selected === answer;
 
-            updatePerformance(kanji.kanji, type, isCorrect); // Update SRS data
+            updatePerformance(kanji.kanji, type, isCorrect);
 
             const kunReadings = kanji.kunyomi.join(', ');
             const onReadings = kanji.onyomi.join(', ');
@@ -587,7 +621,7 @@
         function checkForTitleUnlocks() {
             let unlockDelay = 0;
             titles.forEach(title => {
-                if (!player.unlockedTitles.includes(title.name) && title.condition(player.stats)) {
+                if (!player.unlockedTitles.includes(title.name) && title.condition(player.stats, player)) {
                     player.unlockedTitles.push(title.name);
                     showAchievementToast(title.name, unlockDelay);
                     unlockDelay += 4000;
@@ -650,25 +684,35 @@
             }
         }
 
+        // --- REWRITTEN function to build titles with tooltips ---
         function populateTitlesScreen() {
             dom.titlesList.innerHTML = '';
             titles.forEach((title, index) => {
                 const isUnlocked = player.unlockedTitles.includes(title.name);
                 const isEquipped = player.currentTitle === title.name;
+
+                // Main container for the title card and its tooltip
+                const cardContainer = document.createElement('div');
+                cardContainer.className = 'title-card';
+
                 const titleEl = document.createElement('div');
                 titleEl.className = `p-3 rounded-2xl text-center cursor-pointer transition-all duration-300 transform hover:scale-105 ease-in-out`;
-                if (isUnlocked) titleEl.classList.add('bg-gray-900/50', 'hover:bg-gray-800/70', 'border', 'border-gray-700');
-                else titleEl.classList.add('bg-gray-700/50', 'text-gray-500', 'cursor-not-allowed');
-                if (isEquipped) titleEl.classList.add('ring-2', 'ring-offset-2', 'ring-offset-gray-800', `ring-${title.rarity === 'legendary' ? 'yellow' : 'purple'}-400`);
-                titleEl.style.opacity = '0';
-                titleEl.style.transform = 'translateY(10px)';
-                dom.titlesList.appendChild(titleEl);
-                setTimeout(() => {
-                    titleEl.style.transition = 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)';
-                    titleEl.style.opacity = '1';
-                    titleEl.style.transform = 'translateY(0)';
-                }, 50 * (index + 1));
-                titleEl.innerHTML = `<div class="font-semibold ${isUnlocked ? 'title-' + title.rarity : ''}">${title.name}</div><div class="text-xs ${isUnlocked ? 'text-gray-400' : 'text-gray-600'}">${isUnlocked ? 'Unlocked' : 'Locked'}</div>`;
+                
+                if (isUnlocked) {
+                    titleEl.classList.add('bg-gray-900/50', 'hover:bg-gray-800/70', 'border', 'border-gray-700');
+                } else {
+                    titleEl.classList.add('bg-gray-700/50', 'text-gray-500', 'cursor-not-allowed');
+                }
+
+                if (isEquipped) {
+                    titleEl.classList.add('ring-2', 'ring-offset-2', 'ring-offset-gray-800', `ring-${title.rarity === 'legendary' ? 'yellow' : 'purple'}-400`);
+                }
+
+                titleEl.innerHTML = `
+                    <div class="font-semibold ${isUnlocked ? 'title-' + title.rarity : ''}">${title.name}</div>
+                    <div class="text-xs ${isUnlocked ? 'text-gray-400' : 'text-gray-600'}">${isUnlocked ? 'Unlocked' : 'Locked'}</div>
+                `;
+
                 if (isUnlocked) {
                     titleEl.onclick = () => {
                         player.currentTitle = isEquipped ? null : title.name;
@@ -677,6 +721,38 @@
                         saveProgress();
                     };
                 }
+
+                // Create the tooltip
+                const tooltip = document.createElement('div');
+                tooltip.className = 'info-tooltip text-left';
+                let tooltipContent = `<p class="text-sm font-semibold mb-1">${title.description}</p>`;
+                
+                // Add progress bar if applicable
+                const progressData = title.progress ? title.progress(player.stats, player) : null;
+                if (progressData) {
+                    const current = Math.min(progressData.current, progressData.target);
+                    const percentage = (current / progressData.target) * 100;
+                    tooltipContent += `
+                        <p class="text-xs text-gray-400 mb-1">Progress: ${current} / ${progressData.target}</p>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar-inner" style="width: ${percentage}%"></div>
+                        </div>
+                    `;
+                }
+
+                tooltip.innerHTML = tooltipContent;
+                cardContainer.appendChild(titleEl);
+                cardContainer.appendChild(tooltip);
+                
+                // Animate entrance
+                cardContainer.style.opacity = '0';
+                cardContainer.style.transform = 'translateY(10px)';
+                dom.titlesList.appendChild(cardContainer);
+                setTimeout(() => {
+                    cardContainer.style.transition = 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                    cardContainer.style.opacity = '1';
+                    cardContainer.style.transform = 'translateY(0)';
+                }, 50 * (index + 1));
             });
         }
 
