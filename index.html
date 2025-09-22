@@ -271,24 +271,28 @@
             { name: "Supersonic Legend", minLevel: 140, icon: "💫", colorClass: "rank-supersonic-legend", glowColor: "#00f7ff" }
         ];
 
-        const titles = [
+const titles = [
             { id: 1, name: "Kanji Novice", rarity: "common", condition: (stats) => stats.totalCorrect >= 1 },
             { id: 2, name: "First Steps", rarity: "common", condition: (stats) => stats.sessionsCompleted >= 1 },
             { id: 3, name: "Reader in Training", rarity: "common", condition: (stats) => stats.totalCorrect >= 10 },
+            { id: 9, name: "Quick Learner", rarity: "common", condition: (stats) => stats.level >= 15 },
+            
             { id: 4, name: "Streak Starter", rarity: "uncommon", condition: (stats) => stats.maxStreak >= 5 },
             { id: 5, name: "On'yomi Apprentice", rarity: "uncommon", condition: (stats) => stats.correctOnyomi >= 20 },
             { id: 6, name: "Kun'yomi Kenkyuuin", rarity: "uncommon", condition: (stats) => stats.correctKunyomi >= 20 },
             { id: 7, name: "Meaning Master", rarity: "uncommon", condition: (stats) => stats.correctMeaning >= 20 },
             { id: 8, name: "Silver Soul", rarity: "uncommon", condition: (stats) => stats.rankName.startsWith("Silver") },
-            { id: 9, name: "Quick Learner", rarity: "common", condition: (stats) => stats.level >= 15 },
             { id: 10, name: "Dedicated Student", rarity: "uncommon", condition: (stats) => stats.sessionsCompleted >= 5 },
+            
             { id: 11, name: "Perfect Ten", rarity: "rare", condition: (stats) => stats.maxStreak >= 10 },
             { id: 12, name: "Century Club", rarity: "rare", condition: (stats) => stats.totalCorrect >= 100 },
             { id: 13, name: "Gold Standard", rarity: "rare", condition: (stats) => stats.rankName.startsWith("Gold") },
-            { id: 14, name: "Unstoppable", rarity: "epic", condition: (stats) => stats.maxStreak >= 20 },
             { id: 15, name: "Kanji Scholar", rarity: "rare", condition: (stats) => stats.totalCorrect >= 250 },
             { id: 16, name: "Platinum Player", rarity: "rare", condition: (stats) => stats.rankName.startsWith("Platinum") },
             { id: 17, name: "Halfway Hero", rarity: "rare", condition: (stats) => stats.level >= 50 },
+            { id: 29, name: "Sensei", rarity: "rare", condition: (stats) => kanjiData.every(k => stats.masteredKanji.includes(k.kanji))},
+
+            { id: 14, name: "Unstoppable", rarity: "epic", condition: (stats) => stats.maxStreak >= 20 },
             { id: 18, name: "On'yomi Expert", rarity: "epic", condition: (stats) => stats.correctOnyomi >= 100 },
             { id: 19, name: "Kun'yomi Master", rarity: "epic", condition: (stats) => stats.correctKunyomi >= 100 },
             { id: 20, name: "Diamond Dynamo", rarity: "epic", condition: (stats) => stats.rankName.startsWith("Diamond") },
@@ -296,11 +300,11 @@
             { id: 22, name: "The Consecutor", rarity: "epic", condition: (stats) => stats.maxStreak >= 35 },
             { id: 23, name: "Champion's Aura", rarity: "epic", condition: (stats) => stats.rankName.startsWith("Champion") },
             { id: 24, name: "Level 100 Legend", rarity: "epic", condition: (stats) => stats.level >= 100 },
+
             { id: 25, name: "Kanji Kensei", rarity: "legendary", condition: (stats) => stats.totalCorrect >= 750 },
             { id: 26, name: "Grand Champion", rarity: "legendary", condition: (stats) => stats.rankName.startsWith("Grand Champion") },
             { id: 27, name: "Thousand Triumph", rarity: "legendary", condition: (stats) => stats.totalCorrect >= 1000 },
             { id: 28, name: "Flawless Fifty", rarity: "legendary", condition: (stats) => stats.maxStreak >= 50 },
-            { id: 29, name: "Sensei", rarity: "legendary", condition: (stats) => kanjiData.every(k => stats.masteredKanji.includes(k.kanji))},
             { id: 30, name: "Supersonic Legend", rarity: "legendary", condition: (stats) => stats.rankName === "Supersonic Legend" }
         ];
 
