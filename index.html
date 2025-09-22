@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kanji Mastery Quest</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #1a1a2e;
+            background-image: radial-gradient(circle at top right, rgba(127, 29, 248, 0.3), transparent 40%), radial-gradient(circle at bottom left, rgba(0, 247, 255, 0.2), transparent 50%);
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+        .rank-bronze { color: #cd7f32; }
+        .rank-silver { color: #c0c0c0; }
+        .rank-gold { color: #ffd700; }
+        .rank-platinum { color: #e5e4e2; }
+        .rank-diamond { color: #b9f2ff; }
+        .rank-champion { color: #9d4edd; }
+        .rank-grand-champion { color: #e71d36; }
+        .rank-supersonic-legend {
+            background: linear-gradient(45deg, #ff00ea, #00f7ff, #f3ff00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .xp-bar-inner {
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* New Button Styles */
+        .btn {
+            @apply px-6 py-3 font-semibold rounded-3xl shadow-lg focus:outline-none focus:ring-2 focus:ring-opacity-75 transition-all transform duration-300 ease-in-out;
+            background-color: rgba(30, 30, 50, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        .btn:hover {
+            transform: scale(1.05) translateY(-2px);
+            box-shadow: 0 0 20px var(--glow-color, rgba(139, 92, 246, 0.5));
+            border-color: var(--glow-color, rgba(139, 92, 246, 0.8));
+        }
+        .btn-primary {
+            --glow-color: rgba(139, 92, 246, 0.7);
+            @apply text-white focus:ring-indigo-400;
+        }
+        .btn-danger {
+            --glow-color: rgba(239, 68, 68, 0.7);
+            @apply text-red-300 focus:ring-red-400;
+        }
+         .btn-secondary {
+            --glow-color: rgba(107, 114, 128, 0.7);
+             @apply text-gray-200 focus:ring-gray-400;
+        }
+
+        .btn-choice {
+            @apply w-full text-left p-4 rounded-2xl shadow-md transform;
+            background-color: rgba(40, 40, 60, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .btn-choice:hover {
+            transform: translateY(-2px);
+            background-color: rgba(50, 50, 70, 0.8);
+            border-color: #a78bfa;
+            box-shadow: 0 0 15px rgba(167, 139, 250, 0.4);
+        }
+        .correct-answer {
+            animation: correctAnswerPulse 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border-color: #22c55e !important;
+            background-color: rgba(34, 197, 94, 0.25) !important;
+            box-shadow: 0 0 15px rgba(34, 197, 94, 0.5) !important;
+        }
+        .incorrect-answer {
+            animation: incorrectAnswerShake 0.6s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+            border-color: #ef4444 !important;
+            background-color: rgba(239, 68, 68, 0.25) !important;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.5) !important;
+        }
+        
+        /* Title Rarity Styles */
+        .title-common { color: #a0aec0; } /* Gray */
+        .title-uncommon { color: #68d391; } /* Green */
+        .title-rare { color: #4299e1; text-shadow: 0 0 5px #4299e1; } /* Blue */
+        .title-epic { color: #9f7aea; text-shadow: 0 0 8px #9f7aea; } /* Purple */
+        .title-legendary {
+            background: linear-gradient(45deg, #f687b3, #667eea); /* Pink to Indigo */
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 12px rgba(236, 100, 150, 0.7);
+            animation: legendary-glow 2s infinite alternate;
+        }
+        @keyframes legendary-glow {
+            from { text-shadow: 0 0 12px rgba(236, 100, 150, 0.7); }
+            to { text-shadow: 0 0 18px rgba(102, 126, 234, 0.8); }
+        }
+
+        .achievement-toast { animation: toast-in-out 4s ease-in-out forwards; }
+        .rank-up-modal { animation: modal-fade-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .rank-up-glow { box-shadow: 0 0 30px var(--rank-glow-color), 0 0 50px var(--rank-glow-color); animation: pulse-glow 2s infinite alternate; }
+        .fade-in { animation: fadeIn 0.5s ease-out forwards; }
+        .slide-up { animation: slideUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+        .float-animation { animation: float 3s ease-in-out infinite; }
+        .glow-text { text-shadow: 0 0 15px rgba(127, 29, 248, 0.7); animation: text-glow 2s infinite alternate; }
+        .card-hover { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .card-hover:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3); }
+
+        @keyframes correctAnswerPulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        @keyframes incorrectAnswerShake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-5px); } 40%, 80% { transform: translateX(5px); } }
+        @keyframes toast-in-out { 0%, 100% { transform: translateY(150%); opacity: 0; } 10%, 90% { transform: translateY(0); opacity: 1; } }
+        @keyframes modal-fade-in { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes text-glow { from { text-shadow: 0 0 15px rgba(127, 29, 248, 0.7); } to { text-shadow: 0 0 25px rgba(127, 29, 248, 1), 0 0 35px rgba(127, 29, 248, 0.5); } }
+        @keyframes pulse-glow { from { box-shadow: 0 0 30px var(--rank-glow-color), 0 0 50px var(--rank-glow-color); } to { box-shadow: 0 0 40px var(--rank-glow-color), 0 0 60px var(--rank-glow-color), 0 0 80px var(--rank-glow-color); } }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen">
+
+    <div id="app-container" class="w-full max-w-2xl mx-auto p-4 md:p-6">
+
+        <div id="start-screen" class="text-center fade-in">
+            <div class="mb-8 float-animation">
+                <h1 class="text-5xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-indigo-600 glow-text pb-2">Kanji Mastery Quest</h1>
+                <div class="h-1 w-32 bg-gradient-to-r from-purple-400 to-indigo-600 mx-auto mt-4 rounded-full"></div>
+            </div>
+            <p class="text-lg text-gray-400 mb-8 slide-up">Level up your Kanji knowledge. Ready to begin?</p>
+            <div class="max-w-sm mx-auto mb-8 slide-up" style="animation-delay: 0.2s;">
+                 <input type="text" id="player-name-input" placeholder="Enter your name" class="w-full px-4 py-3 bg-gray-700/50 border-2 border-gray-600 rounded-2xl text-center text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-300 transform focus:scale-105">
+            </div>
+            <div class="flex flex-col items-center space-y-4 slide-up" style="animation-delay: 0.4s;">
+                <button id="start-button" class="btn btn-primary text-xl px-10 py-4">Start Learning</button>
+                <button id="reset-button" class="btn btn-danger px-8">Reset Progress</button>
+            </div>
+        </div>
+
+        <div id="game-screen" class="hidden">
+             <div class="bg-gray-900/50 backdrop-blur-sm p-4 rounded-2xl shadow-lg mb-6 border border-gray-700 card-hover fade-in">
+                <div class="flex items-center space-x-4">
+                    <div class="w-16 h-16 bg-gray-700 rounded-full flex items-center justify-center ring-2 ring-purple-500 overflow-hidden">
+                         <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex justify-between items-center">
+                            <div class="min-h-[52px] flex flex-col justify-center">
+                                <div class="flex items-center gap-2">
+                                    <h3 id="player-name" class="font-bold text-xl text-white">Kanjinaut</h3>
+                                    <svg id="edit-name-button" class="w-5 h-5 text-gray-400 hover:text-white cursor-pointer transition-all duration-300 transform hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.536L16.732 3.732z"></path></svg>
+                                </div>
+                                <p id="player-title" class="text-sm font-semibold">- No Title Equipped -</p>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <div id="rank-icon" class="text-3xl"></div>
+                                <div class="text-right">
+                                    <div id="rank-name" class="font-bold text-md">Bronze I</div>
+                                    <div class="text-xs text-gray-400">Level <span id="level">1</span></div>
+                                </div>
+                            </div>
+                        </div>
+                         <div class="mt-2">
+                            <div class="flex justify-between text-xs mb-1 text-gray-300">
+                                <span>XP: <span id="xp-current">0</span> / <span id="xp-needed">100</span></span>
+                            </div>
+                            <div class="w-full bg-gray-700 rounded-full h-2.5 overflow-hidden">
+                                <div id="xp-bar" class="bg-gradient-to-r from-indigo-500 to-purple-500 h-2.5 rounded-full xp-bar-inner" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-gray-900/50 backdrop-blur-sm p-8 rounded-2xl shadow-2xl mb-6 flex flex-col items-center justify-center border border-gray-700 card-hover fade-in" style="min-height: 250px;">
+                <h2 id="kanji-char" class="text-8xl md:text-9xl font-bold" style="text-shadow: 0 0 20px rgba(127, 29, 248, 0.5);">漢</h2>
+                <p id="kanji-meaning" class="text-center text-xl text-cyan-300 mt-4 h-8 transition-all duration-500 opacity-0"></p>
+            </div>
+
+            <div class="fade-in">
+                <p id="question-text" class="text-center text-xl mb-6">What is an on'yomi reading?</p>
+                <div id="choices-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    </div>
+            </div>
+            
+            <div class="text-center mt-6 fade-in">
+                <button id="profile-button" class="btn btn-secondary px-8">Titles & Achievements</button>
+            </div>
+        </div>
+        
+        <div id="profile-screen" class="hidden">
+             <h2 class="text-3xl font-bold text-center mb-6 fade-in">Titles & Achievements</h2>
+             <div id="titles-list" class="grid grid-cols-2 md:grid-cols-3 gap-4 max-h-96 overflow-y-auto p-4 bg-gray-800/60 rounded-2xl">
+                 </div>
+             <div class="mt-6 text-center fade-in">
+                 <button id="back-to-game-button" class="btn btn-primary px-8">Back to Game</button>
+             </div>
+        </div>
+
+    </div>
+
+    <div id="toast-container" class="fixed bottom-5 right-5 w-full max-w-sm z-50 flex flex-col items-end space-y-2">
+    </div>
+
+
+    <div id="rank-up-modal" class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 rank-up-modal z-50">
+        <div id="rank-up-card" class="bg-gray-900 rounded-3xl p-8 text-center relative overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-indigo-600/20"></div>
+            <div class="relative z-10">
+                <h2 class="text-4xl font-bold mb-4">RANK UP!</h2>
+                <div id="new-rank-icon" class="text-8xl mb-4 rank-up-glow mx-auto" style="width: fit-content;"></div>
+                <p class="text-2xl font-semibold mb-6">You've been promoted to <span id="new-rank-name">Silver I</span>!</p>
+                <button id="close-rank-up-modal" class="btn btn-primary">Continue</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        const kanjiData = [
+            { kanji: "漢", onyomi: ["カン"], kunyomi: [], meaning: "Sino-, China", example: { word: "漢字", reading: "かんじ", meaning: "Kanji" } },
+            { kanji: "春", onyomi: ["シュン"], kunyomi: ["はる"], meaning: "Spring", example: { word: "春休み", reading: "はるやすみ", meaning: "Spring break" } },
+            { kanji: "質", onyomi: ["シツ", "シチ"], kunyomi: ["たち"], meaning: "Quality, substance", example: { word: "質問", reading: "しつもん", meaning: "Question" } },
+            { kanji: "究", onyomi: ["キュウ"], kunyomi: ["きわ(める)"], meaning: "Research, study", example: { word: "研究", reading: "けんきゅう", meaning: "Research" } },
+            { kanji: "最", onyomi: ["サイ"], kunyomi: ["もっと(も)"], meaning: "Most, utmost", example: { word: "最高", reading: "さいこう", meaning: "Highest, supreme" } },
+            { kanji: "続", onyomi: ["ゾク"], kunyomi: ["つづ(く)", "つづ(ける)"], meaning: "Continue, series", example: { word: "続ける", reading: "つづける", meaning: "To continue" } },
+            { kanji: "対", onyomi: ["タイ", "ツイ"], kunyomi: ["あいて"], meaning: "Opposite, vs.", example: { word: "反対", reading: "はんたい", meaning: "Opposition, opposite" } },
+            { kanji: "枚", onyomi: ["マイ"], kunyomi: [], meaning: "Counter for flat objects", example: { word: "二枚", reading: "にまい", meaning: "Two flat objects" } },
+            { kanji: "経", onyomi: ["ケイ", "キョウ"], kunyomi: ["へ(る)"], meaning: "Sutra, pass through", example: { word: "経済", reading: "けいざい", meaning: "Economy" } },
+            { kanji: "風", onyomi: ["フウ", "フ"], kunyomi: ["かぜ"], meaning: "Wind, style", example: { word: "台風", reading: "たいふう", meaning: "Typhoon" } },
+            { kanji: "遅", onyomi: ["チ"], kunyomi: ["おく(れる)", "おそ(い)"], meaning: "Slow, late", example: { word: "遅刻", reading: "ちこく", meaning: "Lateness, tardiness" } },
+            { kanji: "送", onyomi: ["ソウ"], kunyomi: ["おく(る)"], meaning: "Send", example: { word: "送る", reading: "おくる", meaning: "To send" } },
+            { kanji: "末", onyomi: ["マツ", "バツ"], kunyomi: ["すえ"], meaning: "End, powder", example: { word: "週末", reading: "しゅうまつ", meaning: "Weekend" } },
+            { kanji: "駅", onyomi: ["エキ"], kunyomi: [], meaning: "Station", example: { word: "駅前", reading: "えきまえ", meaning: "In front of the station" } },
+            { kanji: "内", onyomi: ["ナイ", "ダイ"], kunyomi: ["うち"], meaning: "Inside, within", example: { word: "案内", reading: "あんない", meaning: "Guidance, information" } },
+            { kanji: "変", onyomi: ["ヘン"], kunyomi: ["か(わる)", "か(える)"], meaning: "Change, strange", example: { word: "大変", reading: "たいへん", meaning: "Very, terrible" } },
+            { kanji: "情", onyomi: ["ジョウ", "セイ"], kunyomi: ["なさ(け)"], meaning: "Feeling, emotion", example: { word: "情報", reading: "じょうほう", meaning: "Information" } },
+            { kanji: "達", onyomi: ["タツ"], kunyomi: ["-たち"], meaning: "Plural suffix, reach", example: { word: "友達", reading: "ともだち", meaning: "Friend" } },
+            { kanji: "顔", onyomi: ["ガン"], kunyomi: ["かお"], meaning: "Face", example: { word: "顔色", reading: "かおいろ", meaning: "Complexion" } },
+            { kanji: "年", onyomi: ["ネン"], kunyomi: ["とし"], meaning: "Year", example: { word: "来年", reading: "らいねん", meaning: "Next year" } }
+        ];
+
+        const ranks = [
+            { name: "Bronze I", minLevel: 1, icon: "🥉", colorClass: "rank-bronze", glowColor: "#cd7f32" },
+            { name: "Bronze II", minLevel: 4, icon: "🥉", colorClass: "rank-bronze", glowColor: "#cd7f32" },
+            { name: "Bronze III", minLevel: 7, icon: "🥉", colorClass: "rank-bronze", glowColor: "#cd7f32" },
+            { name: "Silver I", minLevel: 10, icon: "🥈", colorClass: "rank-silver", glowColor: "#c0c0c0" },
+            { name: "Silver II", minLevel: 14, icon: "🥈", colorClass: "rank-silver", glowColor: "#c0c0c0" },
+            { name: "Silver III", minLevel: 18, icon: "🥈", colorClass: "rank-silver", glowColor: "#c0c0c0" },
+            { name: "Gold I", minLevel: 22, icon: "🥇", colorClass: "rank-gold", glowColor: "#ffd700" },
+            { name: "Gold II", minLevel: 27, icon: "🥇", colorClass: "rank-gold", glowColor: "#ffd700" },
+            { name: "Gold III", minLevel: 32, icon: "🥇", colorClass: "rank-gold", glowColor: "#ffd700" },
+            { name: "Platinum I", minLevel: 38, icon: "💿", colorClass: "rank-platinum", glowColor: "#e5e4e2" },
+            { name: "Platinum II", minLevel: 44, icon: "💿", colorClass: "rank-platinum", glowColor: "#e5e4e2" },
+            { name: "Platinum III", minLevel: 50, icon: "💿", colorClass: "rank-platinum", glowColor: "#e5e4e2" },
+            { name: "Diamond I", minLevel: 57, icon: "💎", colorClass: "rank-diamond", glowColor: "#b9f2ff" },
+            { name: "Diamond II", minLevel: 64, icon: "💎", colorClass: "rank-diamond", glowColor: "#b9f2ff" },
+            { name: "Diamond III", minLevel: 71, icon: "💎", colorClass: "rank-diamond", glowColor: "#b9f2ff" },
+            { name: "Champion I", minLevel: 79, icon: "👑", colorClass: "rank-champion", glowColor: "#9d4edd" },
+            { name: "Champion II", minLevel: 87, icon: "👑", colorClass: "rank-champion", glowColor: "#9d4edd" },
+            { name: "Champion III", minLevel: 95, icon: "👑", colorClass: "rank-champion", glowColor: "#9d4edd" },
+            { name: "Grand Champion I", minLevel: 105, icon: "🏆", colorClass: "rank-grand-champion", glowColor: "#e71d36" },
+            { name: "Grand Champion II", minLevel: 115, icon: "🏆", colorClass: "rank-grand-champion", glowColor: "#e71d36" },
+            { name: "Grand Champion III", minLevel: 125, icon: "🏆", colorClass: "rank-grand-champion", glowColor: "#e71d36" },
+            { name: "Supersonic Legend", minLevel: 140, icon: "💫", colorClass: "rank-supersonic-legend", glowColor: "#00f7ff" }
+        ];
+
+        const titles = [
+            { id: 1, name: "Kanji Novice", rarity: "common", condition: (stats) => stats.totalCorrect >= 1 },
+            { id: 2, name: "First Steps", rarity: "common", condition: (stats) => stats.sessionsCompleted >= 1 },
+            { id: 3, name: "Reader in Training", rarity: "common", condition: (stats) => stats.totalCorrect >= 10 },
+            { id: 4, name: "Streak Starter", rarity: "uncommon", condition: (stats) => stats.maxStreak >= 5 },
+            { id: 5, name: "On'yomi Apprentice", rarity: "uncommon", condition: (stats) => stats.correctOnyomi >= 20 },
+            { id: 6, name: "Kun'yomi Kenkyuuin", rarity: "uncommon", condition: (stats) => stats.correctKunyomi >= 20 },
+            { id: 7, name: "Meaning Master", rarity: "uncommon", condition: (stats) => stats.correctMeaning >= 20 },
+            { id: 8, name: "Silver Soul", rarity: "uncommon", condition: (stats) => stats.rankName.startsWith("Silver") },
+            { id: 9, name: "Quick Learner", rarity: "common", condition: (stats) => stats.level >= 15 },
+            { id: 10, name: "Dedicated Student", rarity: "uncommon", condition: (stats) => stats.sessionsCompleted >= 5 },
+            { id: 11, name: "Perfect Ten", rarity: "rare", condition: (stats) => stats.maxStreak >= 10 },
+            { id: 12, name: "Century Club", rarity: "rare", condition: (stats) => stats.totalCorrect >= 100 },
+            { id: 13, name: "Gold Standard", rarity: "rare", condition: (stats) => stats.rankName.startsWith("Gold") },
+            { id: 14, name: "Unstoppable", rarity: "epic", condition: (stats) => stats.maxStreak >= 20 },
+            { id: 15, name: "Kanji Scholar", rarity: "rare", condition: (stats) => stats.totalCorrect >= 250 },
+            { id: 16, name: "Platinum Player", rarity: "rare", condition: (stats) => stats.rankName.startsWith("Platinum") },
+            { id: 17, name: "Halfway Hero", rarity: "rare", condition: (stats) => stats.level >= 50 },
+            { id: 18, name: "On'yomi Expert", rarity: "epic", condition: (stats) => stats.correctOnyomi >= 100 },
+            { id: 19, name: "Kun'yomi Master", rarity: "epic", condition: (stats) => stats.correctKunyomi >= 100 },
+            { id: 20, name: "Diamond Dynamo", rarity: "epic", condition: (stats) => stats.rankName.startsWith("Diamond") },
+            { id: 21, name: "Five Hundred Fortress", rarity: "epic", condition: (stats) => stats.totalCorrect >= 500 },
+            { id: 22, name: "The Consecutor", rarity: "epic", condition: (stats) => stats.maxStreak >= 35 },
+            { id: 23, name: "Champion's Aura", rarity: "epic", condition: (stats) => stats.rankName.startsWith("Champion") },
+            { id: 24, name: "Level 100 Legend", rarity: "epic", condition: (stats) => stats.level >= 100 },
+            { id: 25, name: "Kanji Kensei", rarity: "legendary", condition: (stats) => stats.totalCorrect >= 750 },
+            { id: 26, name: "Grand Champion", rarity: "legendary", condition: (stats) => stats.rankName.startsWith("Grand Champion") },
+            { id: 27, name: "Thousand Triumph", rarity: "legendary", condition: (stats) => stats.totalCorrect >= 1000 },
+            { id: 28, name: "Flawless Fifty", rarity: "legendary", condition: (stats) => stats.maxStreak >= 50 },
+            { id: 29, name: "Sensei", rarity: "legendary", condition: (stats) => kanjiData.every(k => stats.masteredKanji.includes(k.kanji))},
+            { id: 30, name: "Supersonic Legend", rarity: "legendary", condition: (stats) => stats.rankName === "Supersonic Legend" }
+        ];
+
+        let player = {
+            playerName: "Kanjinaut",
+            level: 1,
+            xp: 0,
+            unlockedTitles: [],
+            currentTitle: null,
+            stats: {
+                totalCorrect: 0,
+                totalIncorrect: 0,
+                currentStreak: 0,
+                maxStreak: 0,
+                sessionsCompleted: 0,
+                correctOnyomi: 0,
+                correctKunyomi: 0,
+                correctMeaning: 0,
+                rankName: 'Bronze I',
+                masteredKanji: [],
+            }
+        };
+
+        let currentQuestion = {};
+        const synths = {
+            correct: new Tone.Synth({ oscillator: { type: 'sine' }, envelope: { attack: 0.01, decay: 0.2, sustain: 0.1, release: 0.2 } }).toDestination(),
+            incorrect: new Tone.Synth({ oscillator: { type: 'square' }, envelope: { attack: 0.01, decay: 0.4, sustain: 0, release: 0.2 } }).toDestination(),
+            levelUp: new Tone.PolySynth(Tone.Synth).toDestination(),
+            titleUnlock: new Tone.MembraneSynth().toDestination(),
+        };
+
+        const dom = {
+            startScreen: document.getElementById('start-screen'),
+            gameScreen: document.getElementById('game-screen'),
+            profileScreen: document.getElementById('profile-screen'),
+            startButton: document.getElementById('start-button'),
+            resetButton: document.getElementById('reset-button'),
+            profileButton: document.getElementById('profile-button'),
+            backToGameButton: document.getElementById('back-to-game-button'),
+            rankIcon: document.getElementById('rank-icon'),
+            rankName: document.getElementById('rank-name'),
+            level: document.getElementById('level'),
+            xpCurrent: document.getElementById('xp-current'),
+            xpNeeded: document.getElementById('xp-needed'),
+            xpBar: document.getElementById('xp-bar'),
+            kanjiChar: document.getElementById('kanji-char'),
+            questionText: document.getElementById('question-text'),
+            choicesContainer: document.getElementById('choices-container'),
+            toastContainer: document.getElementById('toast-container'),
+            rankUpModal: document.getElementById('rank-up-modal'),
+            rankUpCard: document.getElementById('rank-up-card'),
+            newRankIcon: document.getElementById('new-rank-icon'),
+            newRankName: document.getElementById('new-rank-name'),
+            closeRankUpModal: document.getElementById('close-rank-up-modal'),
+            titlesList: document.getElementById('titles-list'),
+            playerName: document.getElementById('player-name'),
+            playerTitle: document.getElementById('player-title'),
+            playerNameInput: document.getElementById('player-name-input'),
+            editNameButton: document.getElementById('edit-name-button'),
+            kanjiMeaning: document.getElementById('kanji-meaning')
+        };
+
+        function getRequiredXp(level) {
+            return Math.floor(100 * Math.pow(1.1, level - 1));
+        }
+
+        function updateUI() {
+            const rank = ranks.slice().reverse().find(r => player.level >= r.minLevel);
+            player.stats.rankName = rank.name;
+
+            dom.playerName.textContent = player.playerName;
+
+            // Update title display and rarity class
+            dom.playerTitle.textContent = player.currentTitle ? player.currentTitle : "- No Title Equipped -";
+            dom.playerTitle.className = "text-sm font-semibold"; // Reset classes
+            if (player.currentTitle) {
+                const titleData = titles.find(t => t.name === player.currentTitle);
+                if (titleData) {
+                    dom.playerTitle.classList.add(`title-${titleData.rarity}`);
+                }
+            } else {
+                 dom.playerTitle.classList.add(`title-common`);
+            }
+
+
+            dom.rankIcon.textContent = rank.icon;
+            dom.rankIcon.className = `text-3xl ${rank.colorClass}`;
+            dom.rankName.textContent = rank.name;
+            dom.rankName.className = `font-bold text-md ${rank.colorClass}`;
+            dom.level.textContent = player.level;
+
+            const requiredXp = getRequiredXp(player.level);
+            dom.xpCurrent.textContent = player.xp;
+            dom.xpNeeded.textContent = requiredXp;
+            dom.xpBar.style.width = `${(player.xp / requiredXp) * 100}%`;
+        }
+        
+        function addXp(amount) {
+            const oldRank = ranks.slice().reverse().find(r => player.level >= r.minLevel);
+            player.xp += amount;
+            let requiredXp = getRequiredXp(player.level);
+            let leveledUp = false;
+
+            while (player.xp >= requiredXp) {
+                player.xp -= requiredXp;
+                player.level++;
+                leveledUp = true;
+                requiredXp = getRequiredXp(player.level);
+            }
+
+            if (leveledUp) {
+                synths.levelUp.triggerAttackRelease(["C4", "E4", "G4"], "0.5s", Tone.now());
+                const newRank = ranks.slice().reverse().find(r => player.level >= r.minLevel);
+                if (newRank.name !== oldRank.name) {
+                    showRankUpModal(newRank);
+                }
+            }
+            updateUI();
+            checkForTitleUnlocks();
+            saveProgress();
+        }
+
+        function showRankUpModal(rank) {
+            dom.newRankIcon.textContent = rank.icon;
+            dom.newRankIcon.className = `text-8xl mb-4 rank-up-glow mx-auto ${rank.colorClass}`;
+            dom.rankUpCard.style.setProperty('--rank-glow-color', rank.glowColor);
+            dom.newRankName.textContent = rank.name;
+            dom.newRankName.className = `font-semibold ${rank.colorClass}`;
+            dom.rankUpModal.classList.remove('hidden');
+        }
+
+        function generateQuestion() {
+            dom.kanjiMeaning.classList.add('opacity-0');
+
+            const kanji = kanjiData[Math.floor(Math.random() * kanjiData.length)];
+            const questionTypes = [];
+            if (kanji.onyomi.length > 0) questionTypes.push('onyomi');
+            if (kanji.kunyomi.length > 0) questionTypes.push('kunyomi');
+            questionTypes.push('meaning');
+
+            const type = questionTypes[Math.floor(Math.random() * questionTypes.length)];
+            currentQuestion.kanji = kanji;
+            currentQuestion.type = type;
+
+            let correctAnswer;
+            let choices = [];
+
+            if (type === 'onyomi') {
+                dom.questionText.textContent = `What is an on'yomi reading?`;
+                correctAnswer = kanji.onyomi[Math.floor(Math.random() * kanji.onyomi.length)];
+                choices = getDistractors('onyomi', correctAnswer);
+            } else if (type === 'kunyomi') {
+                dom.questionText.textContent = `What is a kun'yomi reading?`;
+                correctAnswer = kanji.kunyomi[Math.floor(Math.random() * kanji.kunyomi.length)];
+                choices = getDistractors('kunyomi', correctAnswer);
+            } else { // meaning
+                dom.questionText.textContent = `What is the meaning?`;
+                correctAnswer = kanji.meaning;
+                choices = getDistractors('meaning', correctAnswer);
+            }
+
+            currentQuestion.answer = correctAnswer;
+            choices.push(correctAnswer);
+            shuffleArray(choices);
+
+            dom.kanjiChar.style.opacity = '0';
+            setTimeout(() => {
+                dom.kanjiChar.textContent = kanji.kanji;
+                dom.kanjiChar.style.transition = 'opacity 0.5s ease-in-out';
+                dom.kanjiChar.style.opacity = '1';
+            }, 100);
+
+            dom.choicesContainer.innerHTML = '';
+            choices.forEach((choice, index) => {
+                const button = document.createElement('button');
+                button.textContent = choice;
+                button.className = 'btn-choice';
+                button.style.opacity = '0';
+                button.style.transform = 'translateY(10px)';
+                dom.choicesContainer.appendChild(button);
+                
+                setTimeout(() => {
+                    button.style.transition = 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                    button.style.opacity = '1';
+                    button.style.transform = 'translateY(0)';
+                }, 100 * (index + 1));
+                
+                button.onclick = () => handleAnswer(choice, button);
+            });
+        }
+
+        function getDistractors(type, excludeAnswer) {
+            const distractors = new Set();
+            while (distractors.size < 3) {
+                const randomKanji = kanjiData[Math.floor(Math.random() * kanjiData.length)];
+                if (type === 'onyomi' && randomKanji.onyomi.length > 0) {
+                    const reading = randomKanji.onyomi[0];
+                    if (reading !== excludeAnswer) distractors.add(reading);
+                } else if (type === 'kunyomi' && randomKanji.kunyomi.length > 0) {
+                     const reading = randomKanji.kunyomi[0];
+                    if (reading !== excludeAnswer) distractors.add(reading);
+                } else if (type === 'meaning') {
+                     const meaning = randomKanji.meaning;
+                    if (meaning !== excludeAnswer) distractors.add(meaning);
+                }
+            }
+            return Array.from(distractors);
+        }
+
+        function handleAnswer(selected, button) {
+            const buttons = dom.choicesContainer.querySelectorAll('button');
+            buttons.forEach(b => b.disabled = true);
+            
+            dom.kanjiMeaning.textContent = `Meaning: ${currentQuestion.kanji.meaning}`;
+            dom.kanjiMeaning.classList.remove('opacity-0');
+
+            if (selected === currentQuestion.answer) {
+                synths.correct.triggerAttackRelease("C5", "0.2s", Tone.now());
+                button.classList.add('correct-answer');
+                player.stats.totalCorrect++;
+                player.stats.currentStreak++;
+                player.stats.maxStreak = Math.max(player.stats.maxStreak, player.stats.currentStreak);
+                
+                if (currentQuestion.type === 'onyomi') player.stats.correctOnyomi++;
+                if (currentQuestion.type === 'kunyomi') player.stats.correctKunyomi++;
+                if (currentQuestion.type === 'meaning') player.stats.correctMeaning++;
+
+                if(!player.stats.masteredKanji.includes(currentQuestion.kanji.kanji)){
+                    player.stats.masteredKanji.push(currentQuestion.kanji.kanji);
+                }
+
+                addXp(25 + player.stats.currentStreak);
+            } else {
+                synths.incorrect.triggerAttackRelease("C3", "0.3s", Tone.now());
+                button.classList.add('incorrect-answer');
+                player.stats.totalIncorrect++;
+                player.stats.currentStreak = 0;
+                
+                buttons.forEach(b => {
+                    if (b.textContent === currentQuestion.answer) {
+                        b.classList.add('correct-answer');
+                    }
+                });
+            }
+
+            setTimeout(() => {
+                generateQuestion();
+            }, 1800);
+        }
+        
+        function checkForTitleUnlocks() {
+            let unlockDelay = 0;
+            titles.forEach(title => {
+                if (!player.unlockedTitles.includes(title.name) && title.condition(player.stats)) {
+                    player.unlockedTitles.push(title.name);
+                    showAchievementToast(title.name, unlockDelay);
+                    unlockDelay += 4000;
+                }
+            });
+        }
+
+        function showAchievementToast(titleName, delay) {
+            setTimeout(() => {
+                const toast = document.createElement('div');
+                toast.className = 'bg-gradient-to-r from-yellow-500 to-yellow-600 text-black p-4 rounded-lg shadow-2xl w-full achievement-toast';
+                toast.innerHTML = `
+                    <div class="flex items-center">
+                        <div class="text-2xl mr-3">🏆</div>
+                        <div>
+                            <h3 class="font-bold">Title Unlocked!</h3>
+                            <p class="text-sm">${titleName}</p>
+                        </div>
+                    </div>
+                `;
+                dom.toastContainer.appendChild(toast);
+                
+                synths.titleUnlock.triggerAttackRelease("C4", "8n", Tone.now());
+                
+                setTimeout(() => {
+                    toast.remove();
+                }, 3900);
+            }, delay);
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function saveProgress() {
+            localStorage.setItem('kanjiMasteryPlayer', JSON.stringify(player));
+        }
+
+        function loadProgress() {
+            const savedData = localStorage.getItem('kanjiMasteryPlayer');
+            if (savedData) {
+                const loadedPlayer = JSON.parse(savedData);
+                player = {...player, ...loadedPlayer};
+            }
+        }
+        
+        function resetProgress() {
+            const confirmation = window.prompt("To reset all progress, type 'RESET' in the box below. This cannot be undone.");
+            if (confirmation === "RESET") {
+                localStorage.removeItem('kanjiMasteryPlayer');
+                location.reload();
+            }
+        }
+        
+        function changePlayerName() {
+            const newName = prompt("Enter your new name:", player.playerName);
+            if (newName && newName.trim().length > 0) {
+                player.playerName = newName.trim();
+                saveProgress();
+                updateUI();
+            }
+        }
+
+        function populateTitlesScreen() {
+            dom.titlesList.innerHTML = '';
+            titles.forEach((title, index) => {
+                const isUnlocked = player.unlockedTitles.includes(title.name);
+                const isEquipped = player.currentTitle === title.name;
+                const titleEl = document.createElement('div');
+                titleEl.className = `p-3 rounded-2xl text-center cursor-pointer transition-all duration-300 transform hover:scale-105 ease-in-out`;
+
+                if (isUnlocked) {
+                    titleEl.classList.add('bg-gray-900/50', 'hover:bg-gray-800/70', 'border', 'border-gray-700');
+                } else {
+                    titleEl.classList.add('bg-gray-700/50', 'text-gray-500', 'cursor-not-allowed');
+                }
+
+                if (isEquipped) {
+                    titleEl.classList.add('ring-2', 'ring-offset-2', 'ring-offset-gray-800', `ring-${title.rarity === 'legendary' ? 'yellow' : 'purple'}-400`);
+                }
+                
+                titleEl.style.opacity = '0';
+                titleEl.style.transform = 'translateY(10px)';
+                dom.titlesList.appendChild(titleEl);
+                
+                setTimeout(() => {
+                    titleEl.style.transition = 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                    titleEl.style.opacity = '1';
+                    titleEl.style.transform = 'translateY(0)';
+                }, 50 * (index + 1));
+                
+                titleEl.innerHTML = `
+                    <div class="font-semibold ${isUnlocked ? 'title-' + title.rarity : ''}">${title.name}</div>
+                    <div class="text-xs ${isUnlocked ? 'text-gray-400' : 'text-gray-600'}">${isUnlocked ? 'Unlocked' : 'Locked'}</div>
+                `;
+
+                if (isUnlocked) {
+                    titleEl.onclick = () => {
+                        if (isEquipped) {
+                            player.currentTitle = null; // Unequip
+                        } else {
+                            player.currentTitle = title.name; // Equip
+                        }
+                        populateTitlesScreen();
+                        updateUI();
+                        saveProgress();
+                    };
+                }
+            });
+        }
+
+        function init() {
+            loadProgress();
+
+            dom.startButton.addEventListener('click', () => {
+                const nameInput = dom.playerNameInput.value.trim();
+                if (nameInput) {
+                    player.playerName = nameInput;
+                }
+                Tone.start();
+                dom.startScreen.classList.add('hidden');
+                dom.gameScreen.classList.remove('hidden');
+                
+                const gameElements = dom.gameScreen.querySelectorAll('.fade-in');
+                gameElements.forEach((el, index) => {
+                    el.style.opacity = '0';
+                    setTimeout(() => {
+                        el.style.transition = 'opacity 0.5s ease-in-out';
+                        el.style.opacity = '1';
+                    }, 100 * (index + 1));
+                });
+                
+                player.stats.sessionsCompleted++;
+                updateUI();
+                generateQuestion();
+                saveProgress();
+            });
+
+            dom.resetButton.addEventListener('click', resetProgress);
+            dom.editNameButton.addEventListener('click', changePlayerName);
+
+            dom.closeRankUpModal.addEventListener('click', () => {
+                dom.rankUpModal.classList.add('hidden');
+            });
+            
+            dom.profileButton.addEventListener('click', () => {
+                dom.gameScreen.classList.add('hidden');
+                dom.profileScreen.classList.remove('hidden');
+                populateTitlesScreen();
+            });
+            
+            dom.backToGameButton.addEventListener('click', () => {
+                dom.profileScreen.classList.add('hidden');
+                dom.gameScreen.classList.remove('hidden');
+            });
+        }
+
+        init();
+    </script>
+</body>
+</html>
