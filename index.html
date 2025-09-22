@@ -60,7 +60,7 @@
         }
 
         .btn-choice {
-            @apply w-full text-left p-4 rounded-2xl shadow-md transform;
+            @apply w-full text-center p-4 rounded-2xl shadow-md transform text-2xl;
             background-color: rgba(40, 40, 60, 0.6);
             border: 1px solid rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(8px);
@@ -180,7 +180,7 @@
             
             <div class="bg-gray-900/50 backdrop-blur-sm p-8 rounded-2xl shadow-2xl mb-6 flex flex-col items-center justify-center border border-gray-700 card-hover fade-in" style="min-height: 250px;">
                 <h2 id="kanji-char" class="text-8xl md:text-9xl font-bold" style="text-shadow: 0 0 20px rgba(127, 29, 248, 0.5);">漢</h2>
-                <p id="kanji-meaning" class="text-center text-xl text-cyan-300 mt-4 h-8 transition-all duration-500 opacity-0"></p>
+                <p id="kanji-info" class="text-center text-lg text-cyan-300 mt-4 h-8 transition-all duration-500 opacity-0"></p>
             </div>
 
             <div class="fade-in">
@@ -224,26 +224,26 @@
 
     <script>
         const kanjiData = [
-            { kanji: "漢", onyomi: ["カン"], kunyomi: [], meaning: "Sino-, China", example: { word: "漢字", reading: "かんじ", meaning: "Kanji" } },
-            { kanji: "春", onyomi: ["シュン"], kunyomi: ["はる"], meaning: "Spring", example: { word: "春休み", reading: "はるやすみ", meaning: "Spring break" } },
-            { kanji: "質", onyomi: ["シツ", "シチ"], kunyomi: ["たち"], meaning: "Quality, substance", example: { word: "質問", reading: "しつもん", meaning: "Question" } },
-            { kanji: "究", onyomi: ["キュウ"], kunyomi: ["きわ(める)"], meaning: "Research, study", example: { word: "研究", reading: "けんきゅう", meaning: "Research" } },
-            { kanji: "最", onyomi: ["サイ"], kunyomi: ["もっと(も)"], meaning: "Most, utmost", example: { word: "最高", reading: "さいこう", meaning: "Highest, supreme" } },
-            { kanji: "続", onyomi: ["ゾク"], kunyomi: ["つづ(く)", "つづ(ける)"], meaning: "Continue, series", example: { word: "続ける", reading: "つづける", meaning: "To continue" } },
-            { kanji: "対", onyomi: ["タイ", "ツイ"], kunyomi: ["あいて"], meaning: "Opposite, vs.", example: { word: "反対", reading: "はんたい", meaning: "Opposition, opposite" } },
-            { kanji: "枚", onyomi: ["マイ"], kunyomi: [], meaning: "Counter for flat objects", example: { word: "二枚", reading: "にまい", meaning: "Two flat objects" } },
-            { kanji: "経", onyomi: ["ケイ", "キョウ"], kunyomi: ["へ(る)"], meaning: "Sutra, pass through", example: { word: "経済", reading: "けいざい", meaning: "Economy" } },
-            { kanji: "風", onyomi: ["フウ", "フ"], kunyomi: ["かぜ"], meaning: "Wind, style", example: { word: "台風", reading: "たいふう", meaning: "Typhoon" } },
-            { kanji: "遅", onyomi: ["チ"], kunyomi: ["おく(れる)", "おそ(い)"], meaning: "Slow, late", example: { word: "遅刻", reading: "ちこく", meaning: "Lateness, tardiness" } },
-            { kanji: "送", onyomi: ["ソウ"], kunyomi: ["おく(る)"], meaning: "Send", example: { word: "送る", reading: "おくる", meaning: "To send" } },
-            { kanji: "末", onyomi: ["マツ", "バツ"], kunyomi: ["すえ"], meaning: "End, powder", example: { word: "週末", reading: "しゅうまつ", meaning: "Weekend" } },
-            { kanji: "駅", onyomi: ["エキ"], kunyomi: [], meaning: "Station", example: { word: "駅前", reading: "えきまえ", meaning: "In front of the station" } },
-            { kanji: "内", onyomi: ["ナイ", "ダイ"], kunyomi: ["うち"], meaning: "Inside, within", example: { word: "案内", reading: "あんない", meaning: "Guidance, information" } },
-            { kanji: "変", onyomi: ["ヘン"], kunyomi: ["か(わる)", "か(える)"], meaning: "Change, strange", example: { word: "大変", reading: "たいへん", meaning: "Very, terrible" } },
-            { kanji: "情", onyomi: ["ジョウ", "セイ"], kunyomi: ["なさ(け)"], meaning: "Feeling, emotion", example: { word: "情報", reading: "じょうほう", meaning: "Information" } },
-            { kanji: "達", onyomi: ["タツ"], kunyomi: ["-たち"], meaning: "Plural suffix, reach", example: { word: "友達", reading: "ともだち", meaning: "Friend" } },
-            { kanji: "顔", onyomi: ["ガン"], kunyomi: ["かお"], meaning: "Face", example: { word: "顔色", reading: "かおいろ", meaning: "Complexion" } },
-            { kanji: "年", onyomi: ["ネン"], kunyomi: ["とし"], meaning: "Year", example: { word: "来年", reading: "らいねん", meaning: "Next year" } }
+            { kanji: "漢", onyomi: ["カン"], kunyomi: [], meaning: "Sino-, China" },
+            { kanji: "春", onyomi: ["シュン"], kunyomi: ["はる"], meaning: "Spring" },
+            { kanji: "質", onyomi: ["シツ", "シチ"], kunyomi: ["たち"], meaning: "Quality, substance" },
+            { kanji: "究", onyomi: ["キュウ"], kunyomi: ["きわ(める)"], meaning: "Research, study" },
+            { kanji: "最", onyomi: ["サイ"], kunyomi: ["もっと(も)"], meaning: "Most, utmost" },
+            { kanji: "続", onyomi: ["ゾク"], kunyomi: ["つづ(く)", "つづ(ける)"], meaning: "Continue, series" },
+            { kanji: "対", onyomi: ["タイ", "ツイ"], kunyomi: ["あいて"], meaning: "Opposite, vs." },
+            { kanji: "枚", onyomi: ["マイ"], kunyomi: [], meaning: "Counter for flat objects" },
+            { kanji: "経", onyomi: ["ケイ", "キョウ"], kunyomi: ["へ(る)"], meaning: "Sutra, pass through" },
+            { kanji: "風", onyomi: ["フウ", "フ"], kunyomi: ["かぜ"], meaning: "Wind, style" },
+            { kanji: "遅", onyomi: ["チ"], kunyomi: ["おく(れる)", "おそ(い)"], meaning: "Slow, late" },
+            { kanji: "送", onyomi: ["ソウ"], kunyomi: ["おく(る)"], meaning: "Send" },
+            { kanji: "末", onyomi: ["マツ", "バツ"], kunyomi: ["すえ"], meaning: "End, powder" },
+            { kanji: "駅", onyomi: ["エキ"], kunyomi: [], meaning: "Station" },
+            { kanji: "内", onyomi: ["ナイ", "ダイ"], kunyomi: ["うち"], meaning: "Inside, within" },
+            { kanji: "変", onyomi: ["ヘン"], kunyomi: ["か(わる)", "か(える)"], meaning: "Change, strange" },
+            { kanji: "情", onyomi: ["ジョウ", "セイ"], kunyomi: ["なさ(け)"], meaning: "Feeling, emotion" },
+            { kanji: "達", onyomi: ["タツ"], kunyomi: ["-たち"], meaning: "Plural suffix, reach" },
+            { kanji: "顔", onyomi: ["ガン"], kunyomi: ["かお"], meaning: "Face" },
+            { kanji: "年", onyomi: ["ネン"], kunyomi: ["とし"], meaning: "Year" }
         ];
 
         const ranks = [
@@ -271,19 +271,17 @@
             { name: "Supersonic Legend", minLevel: 140, icon: "💫", colorClass: "rank-supersonic-legend", glowColor: "#00f7ff" }
         ];
 
-const titles = [
+        const titles = [
             { id: 1, name: "Kanji Novice", rarity: "common", condition: (stats) => stats.totalCorrect >= 1 },
             { id: 2, name: "First Steps", rarity: "common", condition: (stats) => stats.sessionsCompleted >= 1 },
             { id: 3, name: "Reader in Training", rarity: "common", condition: (stats) => stats.totalCorrect >= 10 },
             { id: 9, name: "Quick Learner", rarity: "common", condition: (stats) => stats.level >= 15 },
-            
             { id: 4, name: "Streak Starter", rarity: "uncommon", condition: (stats) => stats.maxStreak >= 5 },
             { id: 5, name: "On'yomi Apprentice", rarity: "uncommon", condition: (stats) => stats.correctOnyomi >= 20 },
             { id: 6, name: "Kun'yomi Kenkyuuin", rarity: "uncommon", condition: (stats) => stats.correctKunyomi >= 20 },
             { id: 7, name: "Meaning Master", rarity: "uncommon", condition: (stats) => stats.correctMeaning >= 20 },
             { id: 8, name: "Silver Soul", rarity: "uncommon", condition: (stats) => stats.rankName.startsWith("Silver") },
             { id: 10, name: "Dedicated Student", rarity: "uncommon", condition: (stats) => stats.sessionsCompleted >= 5 },
-            
             { id: 11, name: "Perfect Ten", rarity: "rare", condition: (stats) => stats.maxStreak >= 10 },
             { id: 12, name: "Century Club", rarity: "rare", condition: (stats) => stats.totalCorrect >= 100 },
             { id: 13, name: "Gold Standard", rarity: "rare", condition: (stats) => stats.rankName.startsWith("Gold") },
@@ -291,7 +289,6 @@ const titles = [
             { id: 16, name: "Platinum Player", rarity: "rare", condition: (stats) => stats.rankName.startsWith("Platinum") },
             { id: 17, name: "Halfway Hero", rarity: "rare", condition: (stats) => stats.level >= 50 },
             { id: 29, name: "Sensei", rarity: "rare", condition: (stats) => kanjiData.every(k => stats.masteredKanji.includes(k.kanji))},
-
             { id: 14, name: "Unstoppable", rarity: "epic", condition: (stats) => stats.maxStreak >= 20 },
             { id: 18, name: "On'yomi Expert", rarity: "epic", condition: (stats) => stats.correctOnyomi >= 100 },
             { id: 19, name: "Kun'yomi Master", rarity: "epic", condition: (stats) => stats.correctKunyomi >= 100 },
@@ -300,7 +297,6 @@ const titles = [
             { id: 22, name: "The Consecutor", rarity: "epic", condition: (stats) => stats.maxStreak >= 35 },
             { id: 23, name: "Champion's Aura", rarity: "epic", condition: (stats) => stats.rankName.startsWith("Champion") },
             { id: 24, name: "Level 100 Legend", rarity: "epic", condition: (stats) => stats.level >= 100 },
-
             { id: 25, name: "Kanji Kensei", rarity: "legendary", condition: (stats) => stats.totalCorrect >= 750 },
             { id: 26, name: "Grand Champion", rarity: "legendary", condition: (stats) => stats.rankName.startsWith("Grand Champion") },
             { id: 27, name: "Thousand Triumph", rarity: "legendary", condition: (stats) => stats.totalCorrect >= 1000 },
@@ -314,6 +310,7 @@ const titles = [
             xp: 0,
             unlockedTitles: [],
             currentTitle: null,
+            performanceData: {}, // NEW: For Spaced Repetition System
             stats: {
                 totalCorrect: 0,
                 totalIncorrect: 0,
@@ -323,6 +320,7 @@ const titles = [
                 correctOnyomi: 0,
                 correctKunyomi: 0,
                 correctMeaning: 0,
+                correctKanji: 0,
                 rankName: 'Bronze I',
                 masteredKanji: [],
             }
@@ -364,7 +362,7 @@ const titles = [
             playerTitle: document.getElementById('player-title'),
             playerNameInput: document.getElementById('player-name-input'),
             editNameButton: document.getElementById('edit-name-button'),
-            kanjiMeaning: document.getElementById('kanji-meaning')
+            kanjiInfo: document.getElementById('kanji-info')
         };
 
         function getRequiredXp(level) {
@@ -374,28 +372,20 @@ const titles = [
         function updateUI() {
             const rank = ranks.slice().reverse().find(r => player.level >= r.minLevel);
             player.stats.rankName = rank.name;
-
             dom.playerName.textContent = player.playerName;
-
-            // Update title display and rarity class
             dom.playerTitle.textContent = player.currentTitle ? player.currentTitle : "- No Title Equipped -";
-            dom.playerTitle.className = "text-sm font-semibold"; // Reset classes
+            dom.playerTitle.className = "text-sm font-semibold";
             if (player.currentTitle) {
                 const titleData = titles.find(t => t.name === player.currentTitle);
-                if (titleData) {
-                    dom.playerTitle.classList.add(`title-${titleData.rarity}`);
-                }
+                if (titleData) dom.playerTitle.classList.add(`title-${titleData.rarity}`);
             } else {
                  dom.playerTitle.classList.add(`title-common`);
             }
-
-
             dom.rankIcon.textContent = rank.icon;
             dom.rankIcon.className = `text-3xl ${rank.colorClass}`;
             dom.rankName.textContent = rank.name;
             dom.rankName.className = `font-bold text-md ${rank.colorClass}`;
             dom.level.textContent = player.level;
-
             const requiredXp = getRequiredXp(player.level);
             dom.xpCurrent.textContent = player.xp;
             dom.xpNeeded.textContent = requiredXp;
@@ -407,20 +397,16 @@ const titles = [
             player.xp += amount;
             let requiredXp = getRequiredXp(player.level);
             let leveledUp = false;
-
             while (player.xp >= requiredXp) {
                 player.xp -= requiredXp;
                 player.level++;
                 leveledUp = true;
                 requiredXp = getRequiredXp(player.level);
             }
-
             if (leveledUp) {
                 synths.levelUp.triggerAttackRelease(["C4", "E4", "G4"], "0.5s", Tone.now());
                 const newRank = ranks.slice().reverse().find(r => player.level >= r.minLevel);
-                if (newRank.name !== oldRank.name) {
-                    showRankUpModal(newRank);
-                }
+                if (newRank.name !== oldRank.name) showRankUpModal(newRank);
             }
             updateUI();
             checkForTitleUnlocks();
@@ -436,47 +422,90 @@ const titles = [
             dom.rankUpModal.classList.remove('hidden');
         }
 
-        function generateQuestion() {
-            dom.kanjiMeaning.classList.add('opacity-0');
-
-            const kanji = kanjiData[Math.floor(Math.random() * kanjiData.length)];
-            const questionTypes = [];
-            if (kanji.onyomi.length > 0) questionTypes.push('onyomi');
-            if (kanji.kunyomi.length > 0) questionTypes.push('kunyomi');
-            questionTypes.push('meaning');
-
-            const type = questionTypes[Math.floor(Math.random() * questionTypes.length)];
-            currentQuestion.kanji = kanji;
-            currentQuestion.type = type;
-
-            let correctAnswer;
-            let choices = [];
-
-            if (type === 'onyomi') {
-                dom.questionText.textContent = `What is an on'yomi reading?`;
-                correctAnswer = kanji.onyomi[Math.floor(Math.random() * kanji.onyomi.length)];
-                choices = getDistractors('onyomi', correctAnswer);
-            } else if (type === 'kunyomi') {
-                dom.questionText.textContent = `What is a kun'yomi reading?`;
-                correctAnswer = kanji.kunyomi[Math.floor(Math.random() * kanji.kunyomi.length)];
-                choices = getDistractors('kunyomi', correctAnswer);
-            } else { // meaning
-                dom.questionText.textContent = `What is the meaning?`;
-                correctAnswer = kanji.meaning;
-                choices = getDistractors('meaning', correctAnswer);
+        // --- NEW Spaced Repetition System (SRS) Logic ---
+        function updatePerformance(kanjiChar, type, isCorrect) {
+            if (!player.performanceData[kanjiChar]) {
+                player.performanceData[kanjiChar] = {};
             }
+            if (!player.performanceData[kanjiChar][type]) {
+                player.performanceData[kanjiChar][type] = [];
+            }
+            const history = player.performanceData[kanjiChar][type];
+            history.push(isCorrect);
+            if (history.length > 5) {
+                history.shift(); // Keep only the last 5 results
+            }
+        }
 
-            currentQuestion.answer = correctAnswer;
+        function getWrongnessScore(kanjiChar, type) {
+            const history = player.performanceData[kanjiChar]?.[type];
+            if (!history || history.length === 0) {
+                return 1.0; // 100% wrong if never answered
+            }
+            const wrongCount = history.filter(correct => !correct).length;
+            return wrongCount / history.length;
+        }
+        // --- End of SRS Logic ---
+
+        function generateQuestion() {
+            dom.kanjiInfo.classList.add('opacity-0');
+            
+            // 1. Build a pool of all possible questions
+            const questionPool = [];
+            kanjiData.forEach(kanji => {
+                if (kanji.onyomi.length > 0) questionPool.push({ kanji: kanji, type: 'onyomi' });
+                if (kanji.kunyomi.length > 0) questionPool.push({ kanji: kanji, type: 'kunyomi' });
+                questionPool.push({ kanji: kanji, type: 'meaning' });
+                if (kanji.onyomi.length > 0 || kanji.kunyomi.length > 0) {
+                    questionPool.push({ kanji: kanji, type: 'kanji' });
+                }
+            });
+
+            // 2. Score each question and sort by the ones you get wrong most often
+            const scoredPool = questionPool.map(q => ({
+                ...q,
+                score: getWrongnessScore(q.kanji.kanji, q.type)
+            })).sort((a, b) => b.score - a.score);
+
+            // 3. Pick a random question from the top 25% of your weakest questions
+            const topTierCount = Math.max(5, Math.floor(scoredPool.length * 0.25));
+            const chosenQuestionData = scoredPool[Math.floor(Math.random() * topTierCount)];
+            
+            // 4. Generate the question based on the prioritized selection
+            const { kanji, type } = chosenQuestionData;
+            let correctAnswer;
+            let choices;
+
+            if (type === 'kanji') {
+                const readingType = Math.random() < 0.5 && kanji.kunyomi.length > 0 ? 'kunyomi' : 'onyomi';
+                const reading = kanji[readingType][Math.floor(Math.random() * kanji[readingType].length)];
+                dom.questionText.textContent = `Which Kanji has this reading?`;
+                dom.kanjiChar.textContent = reading;
+                dom.kanjiChar.className = 'text-7xl md:text-8xl font-bold';
+                correctAnswer = kanji.kanji;
+                choices = getDistractors('kanji', correctAnswer);
+            } else {
+                dom.kanjiChar.textContent = kanji.kanji;
+                dom.kanjiChar.className = 'text-8xl md:text-9xl font-bold';
+                if (type === 'onyomi') {
+                    dom.questionText.textContent = `What is an on'yomi reading?`;
+                    correctAnswer = kanji.onyomi[Math.floor(Math.random() * kanji.onyomi.length)];
+                    choices = getDistractors('onyomi', correctAnswer);
+                } else if (type === 'kunyomi') {
+                    dom.questionText.textContent = `What is a kun'yomi reading?`;
+                    correctAnswer = kanji.kunyomi[Math.floor(Math.random() * kanji.kunyomi.length)];
+                    choices = getDistractors('kunyomi', correctAnswer);
+                } else { // meaning
+                    dom.questionText.textContent = `What is the meaning?`;
+                    correctAnswer = kanji.meaning;
+                    choices = getDistractors('meaning', correctAnswer);
+                }
+            }
+            
+            currentQuestion = { kanji, type, answer: correctAnswer };
             choices.push(correctAnswer);
             shuffleArray(choices);
-
-            dom.kanjiChar.style.opacity = '0';
-            setTimeout(() => {
-                dom.kanjiChar.textContent = kanji.kanji;
-                dom.kanjiChar.style.transition = 'opacity 0.5s ease-in-out';
-                dom.kanjiChar.style.opacity = '1';
-            }, 100);
-
+            
             dom.choicesContainer.innerHTML = '';
             choices.forEach((choice, index) => {
                 const button = document.createElement('button');
@@ -485,13 +514,11 @@ const titles = [
                 button.style.opacity = '0';
                 button.style.transform = 'translateY(10px)';
                 dom.choicesContainer.appendChild(button);
-                
                 setTimeout(() => {
                     button.style.transition = 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)';
                     button.style.opacity = '1';
                     button.style.transform = 'translateY(0)';
                 }, 100 * (index + 1));
-                
                 button.onclick = () => handleAnswer(choice, button);
             });
         }
@@ -500,16 +527,12 @@ const titles = [
             const distractors = new Set();
             while (distractors.size < 3) {
                 const randomKanji = kanjiData[Math.floor(Math.random() * kanjiData.length)];
-                if (type === 'onyomi' && randomKanji.onyomi.length > 0) {
-                    const reading = randomKanji.onyomi[0];
-                    if (reading !== excludeAnswer) distractors.add(reading);
-                } else if (type === 'kunyomi' && randomKanji.kunyomi.length > 0) {
-                     const reading = randomKanji.kunyomi[0];
-                    if (reading !== excludeAnswer) distractors.add(reading);
-                } else if (type === 'meaning') {
-                     const meaning = randomKanji.meaning;
-                    if (meaning !== excludeAnswer) distractors.add(meaning);
-                }
+                let distractor;
+                if (type === 'onyomi' && randomKanji.onyomi.length > 0) distractor = randomKanji.onyomi[0];
+                else if (type === 'kunyomi' && randomKanji.kunyomi.length > 0) distractor = randomKanji.kunyomi[0];
+                else if (type === 'meaning') distractor = randomKanji.meaning;
+                else if (type === 'kanji') distractor = randomKanji.kanji;
+                if (distractor && distractor !== excludeAnswer) distractors.add(distractor);
             }
             return Array.from(distractors);
         }
@@ -518,41 +541,47 @@ const titles = [
             const buttons = dom.choicesContainer.querySelectorAll('button');
             buttons.forEach(b => b.disabled = true);
             
-            dom.kanjiMeaning.textContent = `Meaning: ${currentQuestion.kanji.meaning}`;
-            dom.kanjiMeaning.classList.remove('opacity-0');
+            const { kanji, type, answer } = currentQuestion;
+            const isCorrect = selected === answer;
 
-            if (selected === currentQuestion.answer) {
+            updatePerformance(kanji.kanji, type, isCorrect); // Update SRS data
+
+            const kunReadings = kanji.kunyomi.join(', ');
+            const onReadings = kanji.onyomi.join(', ');
+            let readingsText = [];
+            if (kunReadings) readingsText.push(kunReadings);
+            if (onReadings) readingsText.push(onReadings);
+            dom.kanjiInfo.textContent = `${readingsText.join(' | ')} — ${kanji.meaning}`;
+            dom.kanjiInfo.classList.remove('opacity-0');
+            
+            if (type === 'kanji') {
+                dom.kanjiChar.textContent = kanji.kanji;
+                dom.kanjiChar.className = 'text-8xl md:text-9xl font-bold';
+            }
+
+            if (isCorrect) {
                 synths.correct.triggerAttackRelease("C5", "0.2s", Tone.now());
                 button.classList.add('correct-answer');
                 player.stats.totalCorrect++;
                 player.stats.currentStreak++;
                 player.stats.maxStreak = Math.max(player.stats.maxStreak, player.stats.currentStreak);
-                
-                if (currentQuestion.type === 'onyomi') player.stats.correctOnyomi++;
-                if (currentQuestion.type === 'kunyomi') player.stats.correctKunyomi++;
-                if (currentQuestion.type === 'meaning') player.stats.correctMeaning++;
-
-                if(!player.stats.masteredKanji.includes(currentQuestion.kanji.kanji)){
-                    player.stats.masteredKanji.push(currentQuestion.kanji.kanji);
+                if (type === 'onyomi') player.stats.correctOnyomi++;
+                if (type === 'kunyomi') player.stats.correctKunyomi++;
+                if (type === 'meaning') player.stats.correctMeaning++;
+                if (type === 'kanji') player.stats.correctKanji++;
+                if(!player.stats.masteredKanji.includes(kanji.kanji)) {
+                    player.stats.masteredKanji.push(kanji.kanji);
                 }
-
                 addXp(25 + player.stats.currentStreak);
             } else {
                 synths.incorrect.triggerAttackRelease("C3", "0.3s", Tone.now());
                 button.classList.add('incorrect-answer');
                 player.stats.totalIncorrect++;
                 player.stats.currentStreak = 0;
-                
-                buttons.forEach(b => {
-                    if (b.textContent === currentQuestion.answer) {
-                        b.classList.add('correct-answer');
-                    }
-                });
+                buttons.forEach(b => { if (b.textContent === answer) b.classList.add('correct-answer'); });
             }
 
-            setTimeout(() => {
-                generateQuestion();
-            }, 1800);
+            setTimeout(generateQuestion, 2200);
         }
         
         function checkForTitleUnlocks() {
@@ -570,22 +599,10 @@ const titles = [
             setTimeout(() => {
                 const toast = document.createElement('div');
                 toast.className = 'bg-gradient-to-r from-yellow-500 to-yellow-600 text-black p-4 rounded-lg shadow-2xl w-full achievement-toast';
-                toast.innerHTML = `
-                    <div class="flex items-center">
-                        <div class="text-2xl mr-3">🏆</div>
-                        <div>
-                            <h3 class="font-bold">Title Unlocked!</h3>
-                            <p class="text-sm">${titleName}</p>
-                        </div>
-                    </div>
-                `;
+                toast.innerHTML = `<div class="flex items-center"><div class="text-2xl mr-3">🏆</div><div><h3 class="font-bold">Title Unlocked!</h3><p class="text-sm">${titleName}</p></div></div>`;
                 dom.toastContainer.appendChild(toast);
-                
                 synths.titleUnlock.triggerAttackRelease("C4", "8n", Tone.now());
-                
-                setTimeout(() => {
-                    toast.remove();
-                }, 3900);
+                setTimeout(() => toast.remove(), 3900);
             }, delay);
         }
 
@@ -604,7 +621,15 @@ const titles = [
             const savedData = localStorage.getItem('kanjiMasteryPlayer');
             if (savedData) {
                 const loadedPlayer = JSON.parse(savedData);
-                player = {...player, ...loadedPlayer};
+                Object.keys(player).forEach(key => {
+                    if (loadedPlayer[key] !== undefined) {
+                        if (typeof player[key] === 'object' && player[key] !== null && !Array.isArray(player[key])) {
+                            player[key] = { ...player[key], ...loadedPlayer[key] };
+                        } else {
+                            player[key] = loadedPlayer[key];
+                        }
+                    }
+                });
             }
         }
         
@@ -632,39 +657,21 @@ const titles = [
                 const isEquipped = player.currentTitle === title.name;
                 const titleEl = document.createElement('div');
                 titleEl.className = `p-3 rounded-2xl text-center cursor-pointer transition-all duration-300 transform hover:scale-105 ease-in-out`;
-
-                if (isUnlocked) {
-                    titleEl.classList.add('bg-gray-900/50', 'hover:bg-gray-800/70', 'border', 'border-gray-700');
-                } else {
-                    titleEl.classList.add('bg-gray-700/50', 'text-gray-500', 'cursor-not-allowed');
-                }
-
-                if (isEquipped) {
-                    titleEl.classList.add('ring-2', 'ring-offset-2', 'ring-offset-gray-800', `ring-${title.rarity === 'legendary' ? 'yellow' : 'purple'}-400`);
-                }
-                
+                if (isUnlocked) titleEl.classList.add('bg-gray-900/50', 'hover:bg-gray-800/70', 'border', 'border-gray-700');
+                else titleEl.classList.add('bg-gray-700/50', 'text-gray-500', 'cursor-not-allowed');
+                if (isEquipped) titleEl.classList.add('ring-2', 'ring-offset-2', 'ring-offset-gray-800', `ring-${title.rarity === 'legendary' ? 'yellow' : 'purple'}-400`);
                 titleEl.style.opacity = '0';
                 titleEl.style.transform = 'translateY(10px)';
                 dom.titlesList.appendChild(titleEl);
-                
                 setTimeout(() => {
                     titleEl.style.transition = 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)';
                     titleEl.style.opacity = '1';
                     titleEl.style.transform = 'translateY(0)';
                 }, 50 * (index + 1));
-                
-                titleEl.innerHTML = `
-                    <div class="font-semibold ${isUnlocked ? 'title-' + title.rarity : ''}">${title.name}</div>
-                    <div class="text-xs ${isUnlocked ? 'text-gray-400' : 'text-gray-600'}">${isUnlocked ? 'Unlocked' : 'Locked'}</div>
-                `;
-
+                titleEl.innerHTML = `<div class="font-semibold ${isUnlocked ? 'title-' + title.rarity : ''}">${title.name}</div><div class="text-xs ${isUnlocked ? 'text-gray-400' : 'text-gray-600'}">${isUnlocked ? 'Unlocked' : 'Locked'}</div>`;
                 if (isUnlocked) {
                     titleEl.onclick = () => {
-                        if (isEquipped) {
-                            player.currentTitle = null; // Unequip
-                        } else {
-                            player.currentTitle = title.name; // Equip
-                        }
+                        player.currentTitle = isEquipped ? null : title.name;
                         populateTitlesScreen();
                         updateUI();
                         saveProgress();
@@ -675,16 +682,12 @@ const titles = [
 
         function init() {
             loadProgress();
-
             dom.startButton.addEventListener('click', () => {
                 const nameInput = dom.playerNameInput.value.trim();
-                if (nameInput) {
-                    player.playerName = nameInput;
-                }
+                if (nameInput) player.playerName = nameInput;
                 Tone.start();
                 dom.startScreen.classList.add('hidden');
                 dom.gameScreen.classList.remove('hidden');
-                
                 const gameElements = dom.gameScreen.querySelectorAll('.fade-in');
                 gameElements.forEach((el, index) => {
                     el.style.opacity = '0';
@@ -693,26 +696,19 @@ const titles = [
                         el.style.opacity = '1';
                     }, 100 * (index + 1));
                 });
-                
                 player.stats.sessionsCompleted++;
                 updateUI();
                 generateQuestion();
                 saveProgress();
             });
-
             dom.resetButton.addEventListener('click', resetProgress);
             dom.editNameButton.addEventListener('click', changePlayerName);
-
-            dom.closeRankUpModal.addEventListener('click', () => {
-                dom.rankUpModal.classList.add('hidden');
-            });
-            
+            dom.closeRankUpModal.addEventListener('click', () => dom.rankUpModal.classList.add('hidden'));
             dom.profileButton.addEventListener('click', () => {
                 dom.gameScreen.classList.add('hidden');
                 dom.profileScreen.classList.remove('hidden');
                 populateTitlesScreen();
             });
-            
             dom.backToGameButton.addEventListener('click', () => {
                 dom.profileScreen.classList.add('hidden');
                 dom.gameScreen.classList.remove('hidden');
